@@ -1,0 +1,8 @@
+dependencies:
+  - name: jstree
+    version: 3.3.0
+    src: htmlwidgets/lib/jstree-3.3.0
+    script: 
+      - jstree.min.js
+    stylesheet:
+      - themes/default/style.min.css
