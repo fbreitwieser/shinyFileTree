@@ -15,6 +15,7 @@ ui = shinyUI(fluidPage(
                  "changed",
                  "conditionalselect"
   )), selected = c("checkbox", "types")),
+  "",
   shinyFileTreeOutput('jstree')
 ))
 

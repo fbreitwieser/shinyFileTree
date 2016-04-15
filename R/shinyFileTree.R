@@ -7,21 +7,39 @@
 #' @import htmlwidgets
 #'
 #' @export
-shinyFileTree <- function(data, plugins = NULL, ...,
-                          plugin_opts = list(
+shinyFileTree <- function(data, plugins = NULL, 
+                          core_opts = list(check_callback = TRUE),
+                          default_plugin_opts = list(
                             checkbox = list(visible = TRUE,three_state = TRUE, whole_node = TRUE, cascade = TRUE),
+                            contextmenu = list(select_node = TRUE, show_at_node = TRUE),
                             types = list(file=list(icon="glyphicon glyphicon-flash"))
-                          ), 
+                          ),
+                          ...,
                           width = NULL, height = NULL) {
 
   # forward options using x
   x <- list(
-    core = list( data = data )
+    core = c(list( data = data), 
+             core_opts )
   )
   if (!is.null(plugins)) x$plugins <- I(plugins)
   
-  for (plugin_name in names(plugin_opts)[names(plugin_opts) %in% plugins])
-    x[[plugin_name]] <- plugin_opts[[plugin_name]]
+  overwriteDefaults <- function (default_opts, set_opts) {
+    stopifnot(is.list(default_opts))
+    if (length(set_opts) == 0)
+      return(default_opts)
+    for (my_opt in names(set_opts)) 
+      default_opts[[my_opt]] <- set_opts[[my_opt]]
+    
+    default_opts
+  }
+  
+  dots_list <- list(...)
+  for (plugin_name in intersect(names(default_plugin_opts), plugins))
+    x[[plugin_name]] <- overwriteDefaults(default_plugin_opts[[plugin_name]],
+                                          dots_list[[plugin_name]])
+   
+  str(x) 
   
   # create widget
   htmlwidgets::createWidget(
