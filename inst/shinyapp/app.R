@@ -15,6 +15,7 @@ ui = shinyUI(fluidPage(
                  "changed",
                  "conditionalselect"
   )), selected = c("checkbox", "types")),
+  verbatimTextOutput("msg"),
   "",
   shinyFileTreeOutput('jstree')
 ))
@@ -24,6 +25,9 @@ server = function(input, output) {
     shinyFileTree(get_list_from_directory(system.file(package="shinyFileTree")),
                   plugins = input$plugins)
   )
+  output$msg <- renderPrint( {
+    input$jstree_selected
+  })
 }
 
 shinyApp(ui = ui, server = server)

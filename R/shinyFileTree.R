@@ -68,7 +68,7 @@ shinyFileTree <- function(data, plugins = NULL,
 #' @name shinyFileTree-shiny
 #'
 #' @export
-shinyFileTreeOutput <- function(outputId, width = '100%', height = '400px'){
+shinyFileTreeOutput <- function(outputId, width = '100%', height = 'auto'){
   htmlwidgets::shinyWidgetOutput(outputId, 'jstree', width, height, package = 'shinyFileTree')
 }
 
