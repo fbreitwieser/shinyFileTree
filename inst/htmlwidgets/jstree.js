@@ -27,6 +27,7 @@ HTMLWidgets.widget({
           //       https://github.com/rstudio/shiny/issues/1098
           var selected_paths = selected_nodes.map(function(o) { return($(el).jstree(true).get_path(o,'/'))})
           Shiny.onInputChange(el.id + '_selected', selected_paths)
+          Shiny.onInputChange(el.id, selected_paths)
         })
         
       },
