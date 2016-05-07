@@ -38,8 +38,6 @@ shinyFileTree <- function(data, plugins = NULL,
   for (plugin_name in intersect(names(default_plugin_opts), plugins))
     x[[plugin_name]] <- overwriteDefaults(default_plugin_opts[[plugin_name]],
                                           dots_list[[plugin_name]])
-   
-  str(x) 
   
   # create widget
   htmlwidgets::createWidget(
