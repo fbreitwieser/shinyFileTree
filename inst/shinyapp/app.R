@@ -4,8 +4,11 @@ library(shinyFileTree)
 ui = shinyUI(fluidPage(
   textInput("dir",label = "Directory", value = system.file(package="shinyFileTree")),
   textInput("ext",label = "Extension", value = ""),
-  checkboxInput("hide_empty_dirs",label = "Hide empty directories", value = TRUE),
-  checkboxGroupInput("plugins","Plugins", sort(c("checkbox",
+  checkboxGroupInput("shiny_opts",
+                     sort(c("hide_empty_dirs", "hide_files")),
+                     label = "Options for directory listing"),
+  numericInput("max_depth",label = "Maximum depth of directory listing", value = 10, min = 1, max = 10),
+  checkboxGroupInput("plugins","Plugins for jstree", sort(c("checkbox",
                  "contextmenu",
                  "dnd",
                  "massload",
@@ -29,8 +32,10 @@ server = function(input, output) {
                        type="directory",
                        state=list(opened=TRUE),
                        children=get_list_from_directory(input$dir,
-                                                        file_ext = input$ext, 
-                                                        hide_empty_dirs = input$hide_empty_dirs)),
+                                                        #file_ext = input$ext, 
+                                                        max_depth = input$max_depth,
+                                                        hide_empty_dirs = "hide_empty_dirs" %in% input$shiny_opts,
+                                                        hide_files = "hide_files" %in% input$shiny_opts)),
                   plugins = input$plugins)
   )
   output$msg <- renderPrint( {

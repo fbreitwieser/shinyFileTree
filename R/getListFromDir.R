@@ -1,5 +1,8 @@
 
-get_list_from_directory <- function(my_dir, pattern = NULL, hide_empty_dirs = FALSE, state = NULL) {
+get_list_from_directory <- function(my_dir, pattern = NULL, 
+                                    hide_empty_dirs = FALSE, 
+                                    hide_files = FALSE,
+                                    state = NULL, max_depth = NULL) {
   all_dirs <- list.dirs(my_dir, recursive = FALSE, full.names=TRUE)
   all_dirs_short <- sub(".*/","",all_dirs)
   all_files <- list.files(my_dir, pattern = pattern)
@@ -9,17 +12,52 @@ get_list_from_directory <- function(my_dir, pattern = NULL, hide_empty_dirs = FA
     return()
  
   dir_res <- lapply(all_dirs,function(x) {
-      children <- get_list_from_directory(x, pattern, hide_empty_dirs, state)
+    name <- basename(x)  
+    if (is.null(max_depth) || max_depth >= 1) {
+      if (!is.null(max_depth))
+        max_depth <- max_depth - 1
+      
+      children <- get_list_from_directory(x, pattern, 
+                                          hide_empty_dirs=hide_empty_dirs, 
+                                          hide_files=hide_files,
+                                          state=state, max_depth = max_depth)
       if (hide_empty_dirs && (is.null(children) || length(children) == 0))
         return(NULL)
-      list(text = basename(x),
-           type = 'directory',
-           state = state,
-           children = children)
-      }) 
-  child_res <- lapply(all_files,function(x) list(text = x, type = 'file'))
+      if (!is.null(attr(children,"dirname", exact = T))) {
+        name <- sprintf("%s (%s)",name, attr(children,"dirname", exact = T))
+        attr(children,"dirname") <- NULL
+      }
+      if (!is.null(max_depth) && max_depth == 0) {
+        children <- NULL
+      }
+    } else {
+      children <- NULL
+    }
+    
+    
+    list(text = name,
+         type = 'directory',
+         state = state,
+         children = children)
+  }) 
   
-  c(dir_res[!sapply(dir_res,is.null)], child_res)
+  dir_res <- dir_res[!sapply(dir_res,is.null)]
+  if (isTRUE(hide_files)) {
+    n_dirs <- ifelse(length(all_dirs)==1, "1 folder", paste(length(all_dirs),"folders"))
+    n_files <- ifelse(length(all_files)==1, "1 file", paste(length(all_files),"files"))
+    if (length(all_files) > 0 && length(all_dirs) > 0) {
+      attr(dir_res, "dirname") <- sprintf("%s, %s", n_dirs, n_files)  
+    } else if (length(all_dirs) > 0) {
+      attr(dir_res, "dirname") <- n_dirs
+    } else if (length(all_files) > 0) {
+      attr(dir_res, "dirname") <- n_files
+    }
+    
+    dir_res
+  } else {
+    child_res <- lapply(all_files,function(x) list(text = x, type = 'file'))
+    c(dir_res, child_res)
+  }
 }
 
 is_empty <- function(x) {
