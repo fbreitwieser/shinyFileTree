@@ -26,20 +26,30 @@ ui = shinyUI(fluidPage(
   verbatimTextOutput("msg")
 ))
 
-server = function(input, output) {
+server = function(input, output, session) {
+
+  get_list <- function(dir, max_depth, shiny_opts) {
+    list(text=dir,
+         type="directory",
+         state=list(opened=TRUE),
+         children=get_list_from_directory(dir,
+                        #file_ext = input$ext, 
+                                         max_depth = max_depth,
+                                         hide_empty_dirs = "hide_empty_dirs" %in% shiny_opts,
+                                         hide_files = "hide_files" %in% shiny_opts))
+  }
+
   output$jstree <- renderShinyFileTree(
-    shinyFileTree(list(text=input$dir,
-                       type="directory",
-                       state=list(opened=TRUE),
-                       children=get_list_from_directory(input$dir,
-                                                        #file_ext = input$ext, 
-                                                        max_depth = input$max_depth,
-                                                        hide_empty_dirs = "hide_empty_dirs" %in% input$shiny_opts,
-                                                        hide_files = "hide_files" %in% input$shiny_opts)),
+    shinyFileTree(get_list(input$dir, input$max_depth, input$shiny_opts),
                   plugins = input$plugins)
   )
   output$msg <- renderPrint( {
     input$jstree_selected
+  })
+
+  observeEvent(input$jstree_dblclick, {
+    message(input$jstree_selected)
+    updateShinyFileTree(session, "jstree", get_list(input$jstree_selected, input$max_depth, input$shiny_opts));
   })
 }
 

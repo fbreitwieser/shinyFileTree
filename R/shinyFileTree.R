@@ -9,6 +9,7 @@
 #' @export
 shinyFileTree <- function(data, plugins = NULL, 
                           core_opts = list(check_callback = TRUE),
+                          is_directory = FALSE,
                           default_plugin_opts = list(
                             checkbox = list(visible = TRUE,three_state = TRUE, whole_node = TRUE, cascade = TRUE),
                             contextmenu = list(select_node = TRUE, show_at_node = TRUE),
@@ -17,6 +18,12 @@ shinyFileTree <- function(data, plugins = NULL,
                           ...,
                           width = NULL, height = NULL) {
 
+  if (isTRUE(is_directory)) {
+    mydir <- data
+    data <- list(text=data_dir,
+                 state=list(opened=TRUE), 
+                 children=shinyFileTree::get_list_from_directory(data_dir, max_depth=1, hide_files=TRUE, show_hidden_files = FALSE))
+  }
   # forward options using x
   x <- list(
     core = c(list( data = data), 
@@ -47,6 +54,11 @@ shinyFileTree <- function(data, plugins = NULL,
     height = height,
     package = 'shinyFileTree'
   )
+}
+
+updateShinyFileTree <- function(session, inputId, data) {
+  message("updating shiny file tree..");
+  session$sendInputMessage(inputId, list(data=data));
 }
 
 #' Shiny bindings for mywidget

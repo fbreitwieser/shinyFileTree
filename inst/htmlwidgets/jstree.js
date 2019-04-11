@@ -20,15 +20,24 @@ HTMLWidgets.widget({
           Shiny.onInputChange(el.id + '_opened', data.node.name) 
         })
         
+        $(el).on('dblclick.jstree', function(e, data) {
+          var selected_nodes = $(el).jstree().get_selected(true)
+          var selected_paths = selected_nodes.map(function(o) { return($(el).jstree(true).get_path(o,'/'))})
+          Shiny.onInputChange(el.id + '_dblclick', selected_paths)
+          Shiny.onInputChange(el.id, selected_paths)
+        })
+
+
         $(el).on('changed.jstree', function(e, data) {
           var selected_nodes = $(el).jstree().get_selected(true)
-          // TODO: Return list of objects instead of path -
+          // TODO: Return list of objects instead of path?
           //        would require currently a special input handler
           //       https://github.com/rstudio/shiny/issues/1098
           var selected_paths = selected_nodes.map(function(o) { return($(el).jstree(true).get_path(o,'/'))})
           Shiny.onInputChange(el.id + '_selected', selected_paths)
           Shiny.onInputChange(el.id, selected_paths)
         })
+        
         
       },
 

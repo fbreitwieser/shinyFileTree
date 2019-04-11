@@ -1,12 +1,18 @@
 
 get_list_from_directory <- function(my_dir, pattern = NULL, 
                                     hide_empty_dirs = FALSE, 
+                                    show_hidden_files = FALSE,
                                     hide_files = FALSE,
-                                    state = NULL, max_depth = NULL) {
+                                    state = NULL, 
+                                    as_list = TRUE,
+                                    max_depth = 10) {
   all_dirs <- list.dirs(my_dir, recursive = FALSE, full.names=TRUE)
-  all_dirs_short <- sub(".*/","",all_dirs)
-  all_files <- list.files(my_dir, pattern = pattern)
-  all_files <- all_files[!all_files %in% all_dirs_short]
+  all_files <- list.files(my_dir, pattern = pattern, full.names = TRUE)
+  if (!isTRUE(show_hidden_files)) {
+    all_dirs <- all_dirs[!grepl("^\\.|/\\.", all_dirs)]
+    all_files <- all_files[!grepl("^\\.|/\\.", all_files)]
+  }
+  all_files <- all_files[!all_files %in% all_dirs]
   
   if (length(all_files) == 0 && length(all_dirs) == 0)
     return()
@@ -19,6 +25,7 @@ get_list_from_directory <- function(my_dir, pattern = NULL,
       
       children <- get_list_from_directory(x, pattern, 
                                           hide_empty_dirs=hide_empty_dirs, 
+                                          show_hidden_files=show_hidden_files,
                                           hide_files=hide_files,
                                           state=state, max_depth = max_depth)
       if (hide_empty_dirs && (is.null(children) || length(children) == 0))
@@ -34,14 +41,20 @@ get_list_from_directory <- function(my_dir, pattern = NULL,
       children <- NULL
     }
     
-    
+    if (as_list) {
     list(text = name,
          type = 'directory',
          state = state,
          children = children)
+    } else {
+      c(x, children)
+    }
   }) 
   
   dir_res <- dir_res[!sapply(dir_res,is.null)]
+  if (!as_list) {
+    dir_res <- unlist(dir_res)
+  }
   if (isTRUE(hide_files)) {
     n_dirs <- ifelse(length(all_dirs)==1, "1 folder", paste(length(all_dirs),"folders"))
     n_files <- ifelse(length(all_files)==1, "1 file", paste(length(all_files),"files"))
@@ -55,8 +68,12 @@ get_list_from_directory <- function(my_dir, pattern = NULL,
     
     dir_res
   } else {
-    child_res <- lapply(all_files,function(x) list(text = x, type = 'file'))
-    c(dir_res, child_res)
+    if (as_list) {
+      child_res <- lapply(basename(all_files),function(x) list(text = x, type = 'file'))
+      c(dir_res, child_res)
+    } else {
+      c(dir_res, all_files)
+    }
   }
 }
 

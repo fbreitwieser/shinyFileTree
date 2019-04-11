@@ -6,3 +6,8 @@ dependencies:
       - jstree.min.js
     stylesheet:
       - themes/default/style.min.css
+  - name: jstree-input
+    version: 1
+    src: htmlwidgets
+    script: 
+      - jstree-inputbinding.js
