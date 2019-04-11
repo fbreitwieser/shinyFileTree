@@ -48,8 +48,8 @@ server = function(input, output, session) {
   })
 
   observeEvent(input$jstree_dblclick, {
-    message(input$jstree_selected)
-    updateShinyFileTree(session, "jstree", get_list(input$jstree_selected, input$max_depth, input$shiny_opts));
+    message("doubleclicked: ", input$jstree_selected)
+  #  updateShinyFileTree(session, "jstree", get_list(input$jstree_selected, input$max_depth, input$shiny_opts));
   })
 }
 
