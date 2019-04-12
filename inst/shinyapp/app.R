@@ -2,29 +2,37 @@ library(shiny)
 library(shinyFileTree)
 
 ui = shinyUI(fluidPage(
-  textInput("dir",label = "Directory", value = system.file(package="shinyFileTree")),
-  textInput("ext",label = "Extension", value = ""),
-  checkboxGroupInput("shiny_opts",
-                     sort(c("hide_empty_dirs", "hide_files")),
-                     label = "Options for directory listing"),
-  numericInput("max_depth",label = "Maximum depth of directory listing", value = 10, min = 1, max = 10),
-  checkboxGroupInput("plugins","Plugins for jstree", sort(c("checkbox",
-                 "contextmenu",
+  titlePanel("shinyFileTree demo"),
+  sidebarLayout(
+    sidebarPanel(
+      checkboxInput("multiple", "Allow selection of multiple files", value=T),
+      checkboxGroupInput("themes", label = "Theme options", choices = c("icons", "stripes", "responsive"), selected = c("icons")),
+      sliderInput("Animation", label="animation (ms)", 200, min=0, max=2000, step = 50),
+      textInput("themes.variant", label = "Theme variant (try 'large')"),
+      checkboxGroupInput("plugins","Plugins for jstree", sort(c("checkbox",
+                 #"contextmenu",
                  "dnd",
-                 "massload",
-                 "search",
+                 #"massload",
+                 #"search",
                  "sort",
-                 "state",
+                 #"state",
                  "types",
                  "unique",
-                 "wholerow",
-                 "changed",
-                 "conditionalselect"
-  )), selected = c("checkbox", "types"), inline = TRUE),
-  shinyFileTreeOutput('jstree'),
-  "Selected files:",
-  verbatimTextOutput("msg")
-))
+                 "wholerow"#,
+                 #"changed",
+                 #"conditionalselect"
+        )), selected = c("checkbox", "types"), inline = FALSE)),
+    mainPanel(
+      wellPanel(
+        textInput("dir",label = "Directory", value = system.file(package="shinyFileTree")),
+        checkboxGroupInput("shiny_opts",
+                     sort(c("hide_empty_dirs", "hide_files")),
+                     label = "Options for directory listing")
+      ),
+      shinyFileTreeOutput('jstree'),
+      "Selected files:",
+      verbatimTextOutput("msg")
+))))
 
 server = function(input, output, session) {
 
@@ -40,7 +48,14 @@ server = function(input, output, session) {
   }
 
   output$jstree <- renderShinyFileTree(
-    shinyFileTree(get_list(input$dir, input$max_depth, input$shiny_opts),
+    shinyFileTree(get_list(input$dir, 5, input$shiny_opts),
+                  core_opts = shinyFileTreeOpts(check_callback = TRUE,
+                                                animation = input$animation,
+                                                multiple = input$multiple,
+                                                themes.icons = "icons" %in% input$themes,
+                                                themes.stripes = "stripes" %in% input$themes,
+                                                themes.variant = input$themes.variant,
+                                                themes.responsive = "reposonsive" %in% input$themes),
                   plugins = input$plugins)
   )
   output$msg <- renderPrint( {
