@@ -16,5 +16,4 @@ Demo:
 ```
 shiny::runApp(system.file("shinyapp", package="shinyFileTree"))
 ```
-![Screenshot 2019-04-12 14 07 47](https://user-images.githubusercontent.com/516060/56057257-5ce58280-5d2c-11e9-8dbe-9fc65c3a69b3.png)
-
+![Screenshot 2019-04-12 14 27 49](https://user-images.githubusercontent.com/516060/56058356-2b21eb00-5d2f-11e9-9aae-84f676e64cf8.png)
