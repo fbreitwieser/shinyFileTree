@@ -1,16 +1,39 @@
 
+noNULLs <- function(l) {
+    l[!sapply(l, is.null)]
+}
+
+add_s <- function(n) {
+  ifelse(n > 1, "s", "")
+}
+
+dir_desc <- function(n_dirs, n_files) {
+  msg <- ifelse(n_dirs > 0, sprintf("%s folder%s", n_dirs, add_s(n_dirs)), "")
+  if (n_files > 0) {
+    file_msg <- sprintf("%s file%s", n_files, add_s(n_files))
+    if (n_dirs > 0) { 
+      msg <- paste0(msg, ", ", file_msg) 
+    } else {
+      msg <- file_msg
+    }
+  }
+  msg
+}
+
+#' Get a file and directory list for ShinyFileTree
+#' @export
 get_list_from_directory <- function(my_dir, pattern = NULL, 
                                     hide_empty_dirs = FALSE, 
                                     show_hidden_files = FALSE,
                                     hide_files = FALSE,
                                     state = NULL, 
-                                    as_list = TRUE,
+                                    simplify = FALSE,
                                     max_depth = 10) {
   all_dirs <- list.dirs(my_dir, recursive = FALSE, full.names=TRUE)
   all_files <- list.files(my_dir, pattern = pattern, full.names = TRUE)
   if (!isTRUE(show_hidden_files)) {
-    all_dirs <- all_dirs[!grepl("^\\.|/\\.", all_dirs)]
-    all_files <- all_files[!grepl("^\\.|/\\.", all_files)]
+    all_dirs <- all_dirs[!grepl("/\\.", all_dirs)]
+    all_files <- all_files[!grepl("/\\.", all_files)]
   }
   all_files <- all_files[!all_files %in% all_dirs]
   
@@ -41,34 +64,29 @@ get_list_from_directory <- function(my_dir, pattern = NULL,
       children <- NULL
     }
     
-    if (as_list) {
-    list(text = name,
+    if (!isTRUE(simplify)) {
+    noNULLs(list(text = basename(name),
          type = 'directory',
          state = state,
-         children = children)
+         children = children))
     } else {
       c(x, children)
     }
   }) 
   
-  dir_res <- dir_res[!sapply(dir_res,is.null)]
-  if (!as_list) {
+  #dir_res <- dir_res[!sapply(dir_res,is.null)]
+  if (isTRUE(simplify)) {
     dir_res <- unlist(dir_res)
   }
   if (isTRUE(hide_files)) {
-    n_dirs <- ifelse(length(all_dirs)==1, "1 folder", paste(length(all_dirs),"folders"))
-    n_files <- ifelse(length(all_files)==1, "1 file", paste(length(all_files),"files"))
-    if (length(all_files) > 0 && length(all_dirs) > 0) {
-      attr(dir_res, "dirname") <- sprintf("%s, %s", n_dirs, n_files)  
-    } else if (length(all_dirs) > 0) {
-      attr(dir_res, "dirname") <- n_dirs
-    } else if (length(all_files) > 0) {
-      attr(dir_res, "dirname") <- n_files
+    if (is.null(dir_res)) {
+      return(dir_res);
     }
-    
+    msg <- dir_desc(length(all_dirs), length(all_files))
+    attr(dir_res, "dirname") <- msg
     dir_res
   } else {
-    if (as_list) {
+    if (!isTRUE(simplify)) {
       child_res <- lapply(basename(all_files),function(x) list(text = x, type = 'file'))
       c(dir_res, child_res)
     } else {

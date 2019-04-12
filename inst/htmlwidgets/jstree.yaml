@@ -1,4 +1,9 @@
 dependencies:
+  - name: jquery
+    version: 3.4.0
+    src: htmlwidgets/lib
+    script: 
+      - jquery-3.4.0.min.js
   - name: jstree
     version: 3.3.0
     src: htmlwidgets/lib/jstree-3.3.0

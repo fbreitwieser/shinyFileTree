@@ -8,7 +8,7 @@
 #'
 #' @export
 shinyFileTree <- function(data, plugins = NULL, 
-                          core_opts = list(check_callback = TRUE),
+                          core_opts = list(check_callback = TRUE, multiple = FALSE),
                           is_directory = FALSE,
                           default_plugin_opts = list(
                             checkbox = list(visible = TRUE,three_state = TRUE, whole_node = TRUE, cascade = TRUE),
@@ -20,9 +20,9 @@ shinyFileTree <- function(data, plugins = NULL,
 
   if (isTRUE(is_directory)) {
     mydir <- data
-    data <- list(text=data_dir,
+    data <- list(text=mydir,
                  state=list(opened=TRUE), 
-                 children=shinyFileTree::get_list_from_directory(data_dir, max_depth=1, hide_files=TRUE, show_hidden_files = FALSE))
+                 children=get_list_from_directory(mydir, max_depth=1, hide_files=TRUE, show_hidden_files = FALSE))
   }
   # forward options using x
   x <- list(
