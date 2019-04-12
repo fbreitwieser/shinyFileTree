@@ -1,6 +1,6 @@
 # shinyFileTree
 
-R/Shiny widget for jstree with a focus on extensibility and close connection to the javascript library. Most useful for selecting files or browsing directory trees. The library [shinyTree](https://github.com/shinyTree/shinyTree) provides a more feature-rich wrapper to jstree.
+R/Shiny widget for jstree with a focus on extensibility and close connection to the javascript library. Most useful for selecting files or browsing directory trees. For a more feature-rich wrapper to jstree, have a look at the library [shinyTree](https://github.com/shinyTree/shinyTree).
 
 Creating a widget:
 ```
