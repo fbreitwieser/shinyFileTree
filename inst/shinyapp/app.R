@@ -49,7 +49,7 @@ server = function(input, output, session) {
 
   output$jstree <- renderShinyFileTree(
     shinyFileTree(get_list(input$dir, 5, input$shiny_opts),
-                  core_opts = shinyFileTreeOpts(check_callback = TRUE,
+                  opts = shinyFileTreeOpts(check_callback = TRUE,
                                                 animation = input$animation,
                                                 multiple = input$multiple,
                                                 themes.icons = "icons" %in% input$themes,
