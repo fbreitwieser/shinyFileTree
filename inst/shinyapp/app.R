@@ -26,7 +26,8 @@ ui = shinyUI(fluidPage(
       wellPanel(
         textInput("dir",label = "Directory", value = system.file(package="shinyFileTree")),
         checkboxGroupInput("shiny_opts",
-                     sort(c("hide_empty_dirs", "hide_files")),
+                     sort(c("hide_empty_dirs", "show_dir_info")),
+                     selected = c("show_dir_info"),
                      label = "Options for directory listing")
       ),
       shinyFileTreeOutput('jstree'),
@@ -44,7 +45,7 @@ server = function(input, output, session) {
                         #file_ext = input$ext, 
                                          max_depth = max_depth,
                                          hide_empty_dirs = "hide_empty_dirs" %in% shiny_opts,
-                                         hide_files = "hide_files" %in% shiny_opts))
+                                         show_dir_info = "show_dir_info" %in% shiny_opts))
   }
 
   output$jstree <- renderShinyFileTree(

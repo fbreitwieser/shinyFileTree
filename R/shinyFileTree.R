@@ -18,6 +18,13 @@
 #' @import htmlwidgets
 #'
 #' @export
+#' @examples
+#' shinyFileTree(system.file(package="shinyFileTree"), 
+#'              is_directory = TRUE,
+#'              plugins = c("checkbox"),
+#'              multiple = TRUE,
+#'              opts = shinyFileTreeOpts(icons = TRUE)
+#' )
 shinyFileTree <- function(data, plugins = NULL, 
                           opts = shinyFileTreeOpts(),
                           default_plugin_opts = list(
@@ -32,14 +39,14 @@ shinyFileTree <- function(data, plugins = NULL,
                           ...,
                           is_directory = FALSE,
                           directory_depth = NULL,
-                          directory_hide_files = FALSE,
+                          show_dir_info = FALSE,
                           width = NULL, height = NULL) {
 
   if (isTRUE(is_directory)) {
     mydir <- data
     data <- list(text=mydir,
                  state=list(opened=TRUE), 
-                 children=get_list_from_directory(mydir, max_depth=directory_depth, hide_files=directory_hide_files, show_hidden_files = FALSE))
+                 children=get_list_from_directory(mydir, max_depth=directory_depth, show_dir_info=show_dir_info, show_hidden_files = FALSE))
   }
   # forward options using x
   x <- list(
@@ -92,6 +99,7 @@ shinyFileTree <- function(data, plugins = NULL,
 #' @param themes.variant a string (or boolean false) specifying the theme variant to use (if the theme supports variants), e.g. 'large'.
 #' @param themes.reposonsive a boolean specifying if a reponsive version of the theme should kick in on smaller screens (if the theme supports it). Defaults to FALSE.
 #' @param ... Additional jstree options
+#' @export
 shinyFileTreeOpts <- function(
     animation = 200,
     multiple = FALSE,

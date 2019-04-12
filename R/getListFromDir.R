@@ -25,7 +25,7 @@ dir_desc <- function(n_dirs, n_files) {
 get_list_from_directory <- function(my_dir, pattern = NULL, 
                                     hide_empty_dirs = FALSE, 
                                     show_hidden_files = FALSE,
-                                    hide_files = FALSE,
+                                    show_dir_info = FALSE,
                                     state = NULL, 
                                     simplify = FALSE,
                                     max_depth = 10) {
@@ -40,7 +40,7 @@ get_list_from_directory <- function(my_dir, pattern = NULL,
   if (length(all_files) == 0 && length(all_dirs) == 0)
     return()
  
-  dir_res <- lapply(all_dirs,function(x) {
+  all_dirs <- lapply(all_dirs,function(x) {
     name <- basename(x)  
     if (is.null(max_depth) || max_depth >= 1) {
       if (!is.null(max_depth))
@@ -49,7 +49,7 @@ get_list_from_directory <- function(my_dir, pattern = NULL,
       children <- get_list_from_directory(x, pattern, 
                                           hide_empty_dirs=hide_empty_dirs, 
                                           show_hidden_files=show_hidden_files,
-                                          hide_files=hide_files,
+                                          show_dir_info=show_dir_info,
                                           state=state, max_depth = max_depth)
       if (hide_empty_dirs && (is.null(children) || length(children) == 0))
         return(NULL)
@@ -74,25 +74,19 @@ get_list_from_directory <- function(my_dir, pattern = NULL,
     }
   }) 
   
-  #dir_res <- dir_res[!sapply(dir_res,is.null)]
+  #all_dirs <- all_dirs[!sapply(all_dirs,is.null)]
   if (isTRUE(simplify)) {
-    dir_res <- unlist(dir_res)
-  }
-  if (isTRUE(hide_files)) {
-    if (is.null(dir_res)) {
-      return(dir_res);
-    }
-    msg <- dir_desc(length(all_dirs), length(all_files))
-    attr(dir_res, "dirname") <- msg
-    dir_res
+    all_dirs <- unlist(all_dirs)
   } else {
-    if (!isTRUE(simplify)) {
-      child_res <- lapply(basename(all_files),function(x) list(text = x, type = 'file'))
-      c(dir_res, child_res)
-    } else {
-      c(dir_res, all_files)
-    }
+    all_files <- lapply(basename(all_files),function(x) list(text = x, type = 'file'))
   }
+
+  res <- c(all_dirs, all_files)
+  if (isTRUE(show_dir_info)) {
+    msg <- dir_desc(length(all_dirs), length(all_files))
+    attr(res, "dirname") <- msg
+  }
+  res
 }
 
 is_empty <- function(x) {

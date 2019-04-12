@@ -6,7 +6,7 @@
 \usage{
 get_list_from_directory(my_dir, pattern = NULL,
   hide_empty_dirs = FALSE, show_hidden_files = FALSE,
-  hide_files = FALSE, state = NULL, simplify = FALSE,
+  show_dir_info = FALSE, state = NULL, simplify = FALSE,
   max_depth = 10)
 }
 \description{

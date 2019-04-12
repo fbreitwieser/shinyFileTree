@@ -11,7 +11,7 @@ shinyFileTree(data, plugins = NULL, opts = shinyFileTreeOpts(),
   list(case_sensitive = FALSE, show_only_matches = TRUE), types = list(file
   = list(icon = "glyphicon glyphicon-flash"))), ...,
   is_directory = FALSE, directory_depth = NULL,
-  directory_hide_files = FALSE, width = NULL, height = NULL)
+  show_dir_info = FALSE, width = NULL, height = NULL)
 }
 \arguments{
 \item{data}{}
@@ -35,4 +35,12 @@ This creates a widget with a shiny file tree. The widget is based on jstree,
 and the R implementation has the same implementation as jstree. For more 
 details, please refer to https://www.jstree.com/docs/config/ and
 https://www.jstree.com/api/#/?q=$.jstree.defaults
+}
+\examples{
+shinyFileTree(system.file(package="shinyFileTree"), 
+             is_directory = TRUE,
+             plugins = c("checkbox"),
+             multiple = TRUE,
+             opts = shinyFileTreeOpts(icons = TRUE)
+)
 }

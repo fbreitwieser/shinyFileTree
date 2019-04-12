@@ -3,5 +3,6 @@
 export(get_list_from_directory)
 export(renderShinyFileTree)
 export(shinyFileTree)
+export(shinyFileTreeOpts)
 export(shinyFileTreeOutput)
 import(htmlwidgets)
