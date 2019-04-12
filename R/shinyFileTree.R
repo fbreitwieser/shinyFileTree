@@ -34,7 +34,7 @@ shinyFileTree <- function(data, plugins = NULL,
                               case_sensitive=FALSE,
                               show_only_matches = TRUE
                             ),
-                            types = list(file=list(icon="glyphicon glyphicon-flash"))
+                            types = list(file=list(icon="glyphicon glyphicon-file"))
                           ),
                           ...,
                           is_directory = FALSE,
