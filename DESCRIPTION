@@ -1,10 +1,10 @@
 Package: shinyFileTree
-Title: What the Package Does (one line, title case)
+Title: Directory tree for R/Shiny
 Version: 0.0.0.9000
-Authors@R: person("First", "Last", email = "first.last@example.com", role = c("aut", "cre"))
-Description: What the package does (one paragraph).
+Authors@R: person("Florian", "Breitwieser", email = "florian.bw@gmail.com", role = c("aut", "cre"))
+Description: This creates a widget with a shiny file tree.
 Depends: R (>= 3.2.3)
 Imports: htmlwidgets
-License: What license is it under?
+License: GPL-3
 LazyData: true
 RoxygenNote: 6.1.1
