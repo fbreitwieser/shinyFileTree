@@ -54,7 +54,7 @@ get_list_from_directory <- function(my_dir, pattern = NULL,
       if (hide_empty_dirs && (is.null(children) || length(children) == 0))
         return(NULL)
       if (!is.null(attr(children,"dirname", exact = T))) {
-        name <- sprintf("%s (%s)",name, attr(children,"dirname", exact = T))
+        name <- sprintf("%s <i><small>%s</small></i>", basename(name), attr(children,"dirname", exact = T))
         attr(children,"dirname") <- NULL
       }
       if (!is.null(max_depth) && max_depth == 0) {
@@ -65,7 +65,7 @@ get_list_from_directory <- function(my_dir, pattern = NULL,
     }
     
     if (!isTRUE(simplify)) {
-    noNULLs(list(text = basename(name),
+    noNULLs(list(text = name,
          type = 'directory',
          state = state,
          children = children))
@@ -78,7 +78,15 @@ get_list_from_directory <- function(my_dir, pattern = NULL,
   if (isTRUE(simplify)) {
     all_dirs <- unlist(all_dirs)
   } else {
-    all_files <- lapply(basename(all_files),function(x) list(text = x, type = 'file'))
+    all_files <- lapply(seq_along(all_files), function(i) {
+        if (isTRUE(show_dir_info)) {
+          list(text = sprintf("%s <i><small>%s</small></i>", basename(all_files[i]), 
+                              tryCatch({ utils:::format.object_size(file.size(all_files[i]), "auto")},
+                                  error = function(...) {} )), type = 'file')
+        } else {
+          list(text = basename(all_files[i]), type = 'file')
+        }
+    })
   }
 
   res <- c(all_dirs, all_files)
